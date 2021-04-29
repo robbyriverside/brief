@@ -61,11 +61,19 @@ jumped over the moon and ran into a cow</p>
 
 # Key Values
 
-For key-values pairs with a value that is more than just an alpha-numberic token, double quotes are used.
+For key-value pairs with a value that is more than just a simple token[^simple], double quotes are used.  Also, back-slash can be used to escape nested quotes or back-tics.
 
 ```
 elem key:"value of key"  <->   <elem key="value of key"/>
+
+elem key:"my brother \"Bill\""  <->  <elem key="my brother \"Bill\"">
+
+title `time is an \`illusion\`` <->  <title>time is an `illusion`</title>
 ```
+
+[^simple]simple tokens cannot contain brief syntactic characters:  space, colon, back-tic, double-quote.  This allows number formats to be simple tokens.
+
+# Name Key
 
 Because elements often have a "name" keyword to identify them in the document, we give them a special place.  The element type can be a keyword by adding a colon (:) to the end and so it can also have a value, which is the name.
 
@@ -75,4 +83,3 @@ body
 ```
 
 The purpose of this shorthand is to improve readability and standardize on elements having names.  Names are important in a written specification which is the primary purpose of the brief format.
-
