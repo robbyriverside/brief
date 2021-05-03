@@ -14,10 +14,13 @@ import (
 //go:embed tests/test0.brf
 var test0 string
 
+//go:embed tests/test1.brf
+var test1 string
+
 func TestDecoder(t *testing.T) {
 	// FIXME: validate results
-	t.Log(test0)
-	node, err := brief.Decode(strings.NewReader(test0))
+	t.Log(test1)
+	node, err := brief.Decode(strings.NewReader(test1))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,6 +62,16 @@ func TestScanner(t *testing.T) {
 			t.Errorf("%d> compare failed: %q != \n           %q", i, scan, tests[i])
 		}
 		i++
+	}
+}
+
+func TestShowScanner(t *testing.T) {
+	fmt.Println(test1)
+	var text brief.Scanner
+	text.Init(strings.NewReader(test0), 4)
+	for c := text.Scan(); c != scanner.EOF; c = text.Scan() {
+		token := text.TokenText()
+		fmt.Printf("%s= %s indent: %d start: %t line: %d\n", token, scanner.TokenString(c), text.Indent, text.LineStart, text.Pos().Line)
 	}
 }
 

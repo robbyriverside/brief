@@ -7,6 +7,7 @@ import (
 	"text/scanner"
 )
 
+// Decode creates a Node by parsing brief from reader
 func Decode(reader io.Reader) (*Node, error) {
 	var root *Node
 	var text Scanner
@@ -31,8 +32,8 @@ func Decode(reader io.Reader) (*Node, error) {
 		leaf := len(nesting) - 1
 		parent := nesting[leaf]
 		if text.LineStart {
-			if tt != scanner.Ident {
-				return nil, fmt.Errorf("line %d must begin with an identifer: %q", text.Pos().Line, token)
+			if !(tt == scanner.Ident || tt == '+') {
+				return nil, fmt.Errorf("line %d must begin with an identifer or plus: %q", text.Pos().Line, token)
 			}
 
 			if text.Indent <= parent.Indent {
@@ -50,6 +51,11 @@ func Decode(reader io.Reader) (*Node, error) {
 				}
 				leaf = len(nesting) - 1
 				parent = nesting[leaf]
+			}
+
+			if tt == '+' {
+				key = ""
+				continue
 			}
 
 			node := NewNode(token, text.Indent)
@@ -76,6 +82,7 @@ func Decode(reader io.Reader) (*Node, error) {
 			default:
 				return nil, fmt.Errorf("invalid value %s on line %d", scanner.TokenString(tt), text.Pos().Line)
 			}
+			key = "" // clear the key
 			continue
 		}
 
@@ -83,9 +90,15 @@ func Decode(reader io.Reader) (*Node, error) {
 		case ':':
 			addValue = true
 		case scanner.Ident:
+			if key != "" && !isElem {
+				return nil, fmt.Errorf("key %q has no value on line %d", key, text.Pos().Line)
+			}
 			key = token
 			isElem = false
 		case scanner.RawString:
+			if key != "" && !isElem {
+				return nil, fmt.Errorf("key %q has no value on line %d", key, text.Pos().Line)
+			}
 			parent.Content += strings.Trim(token, "`")
 			isElem = false
 		default:
