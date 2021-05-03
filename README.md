@@ -61,14 +61,12 @@ jumped over the moon and ran into a cow</p>
 
 # Key Values
 
-For key-value pairs with a value that is more than just a simple token double quotes are used.  Also, back-slash can be used to escape nested quotes or back-tics.
+For key-value pairs with a value that is more than just a simple token double quotes are used.  
 
 ```
 elem key:"value of key"  <->   <elem key="value of key"/>
 
 elem key:"my brother \"Bill\""  <->  <elem key="my brother \"Bill\"">
-
-title `time is an \`illusion\`` <->  <title>time is an `illusion`</title>
 ```
 
 Simple tokens cannot contain brief syntactic characters:  space, colon, back-tic, double-quote.  This allows number formats to be simple tokens.
