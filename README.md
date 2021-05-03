@@ -26,7 +26,7 @@ html
     body
 ```
 
-Sub-structures are indented to identify a sub-block.  The first identifier on each line is an element name or type.  The back-tic contains multiline text which forms the contents of an element.
+Sub-structures are indented to identify a sub-block.  The first identifier on each line is an element name or type.  The back-tic contains multiline text which forms the contents of an element.  The back-tic must be after any key-value pairs.
 
 
 ```
@@ -37,7 +37,7 @@ html
         h1 `My Web Page`
 
         div id:main class:myblock
-            p `the quick brown fox
+            p id:X `the quick brown fox
 jumped over the moon and ran into a cow`
 ```
 
@@ -52,7 +52,7 @@ Here is the equivalent in HTML.
     <h1>My Web Page</h1>
 
     <div id="main" class="myblock">
-        <p>the quick brown fox
+        <p id="X">the quick brown fox
 jumped over the moon and ran into a cow</p>
     </div>
 </body>
@@ -87,3 +87,12 @@ body
 ```
 
 The purpose of this shorthand is to improve readability and standardize on elements having names.  Names are important in a written specification which is the primary purpose of the brief format.
+
+# Differences from XML
+
+Line cannot start with a back-tic.  Body text requires an element.  Content back-tic is last feature on a line.
+A line that starts with plus '+' is a continuation of the attributes on the line above.  May be followed by a space.
+
+elem:foo bar:zed
+    + more:true range:"3 to 5" `
+  more content here`

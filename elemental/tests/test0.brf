@@ -1,0 +1,9 @@
+html   
+    head
+        title `My Web Page`
+    body class:mybody
+        h1 `My Web Page`
+                            
+        div:main class:myblock
+            p id:X `the quick brown fox
+jumped over the moon and ran into a cow`
