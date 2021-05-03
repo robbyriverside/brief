@@ -8,6 +8,7 @@ import (
 )
 
 func TestEncoder(t *testing.T) {
+	// FIXME: validate results
 	node, err := brief.Decode(strings.NewReader(test0))
 	if err != nil {
 		t.Fatal(err)

@@ -15,6 +15,7 @@ import (
 var test0 string
 
 func TestDecoder(t *testing.T) {
+	// FIXME: validate results
 	t.Log(test0)
 	node, err := brief.Decode(strings.NewReader(test0))
 	if err != nil {
