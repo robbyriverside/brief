@@ -1,14 +1,14 @@
-package elemental_test
+package brief_test
 
 import (
 	"strings"
 	"testing"
 
-	"github.com/robbyriverside/brief/elemental"
+	"github.com/robbyriverside/brief"
 )
 
 func TestEncoder(t *testing.T) {
-	node, err := elemental.Decode(strings.NewReader(test0))
+	node, err := brief.Decode(strings.NewReader(test0))
 	if err != nil {
 		t.Fatal(err)
 	}

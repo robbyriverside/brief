@@ -1,4 +1,4 @@
-package elemental_test
+package brief_test
 
 import (
 	_ "embed"
@@ -8,7 +8,7 @@ import (
 	"testing"
 	"text/scanner"
 
-	"github.com/robbyriverside/brief/elemental"
+	"github.com/robbyriverside/brief"
 )
 
 //go:embed tests/test0.brf
@@ -16,7 +16,7 @@ var test0 string
 
 func TestDecoder(t *testing.T) {
 	t.Log(test0)
-	node, err := elemental.Decode(strings.NewReader(test0))
+	node, err := brief.Decode(strings.NewReader(test0))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,7 +48,7 @@ func TestScanner(t *testing.T) {
 		"`the quick brown fox\njumped over the moon and ran into a cow`= RawString indent: 12 start: false line: 9",
 	}
 	t.Log(test0)
-	var text elemental.Scanner
+	var text brief.Scanner
 	text.Init(strings.NewReader(test0), 4)
 	i := 0
 	for c := text.Scan(); c != scanner.EOF; c = text.Scan() {
@@ -85,7 +85,7 @@ func TestScannerCases(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		var text elemental.Scanner
+		var text brief.Scanner
 		text.Init(strings.NewReader(test.Line), 4)
 		tokens := []string{}
 		for c := text.Scan(); c != scanner.EOF; c = text.Scan() {

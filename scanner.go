@@ -1,4 +1,4 @@
-package elemental
+package brief
 
 import (
 	"io"

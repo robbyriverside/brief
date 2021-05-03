@@ -115,7 +115,7 @@ type Node struct {
 This is more efficient than using reflection to map to an arbitrary structure.  
 
 ```
-root, err := elemental.Decode(reader)
+root, err := brief.Decode(reader)
 ```
 
 The Node structure can be walked to convert to a custom struct, if required.
