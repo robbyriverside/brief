@@ -22,7 +22,7 @@ func Decode(reader io.Reader) (*Node, error) {
 				return nil, fmt.Errorf("first line must begin with an identifer: %q", token)
 			}
 			isFirst = false
-			root = NewNode(token)
+			root = NewNode(token, text.Indent)
 			nesting = append(nesting, root)
 			isElem = true
 			continue
@@ -52,8 +52,7 @@ func Decode(reader io.Reader) (*Node, error) {
 				parent = nesting[leaf]
 			}
 
-			node := NewNode(token)
-			node.Indent = text.Indent
+			node := NewNode(token, text.Indent)
 			parent.Body = append(parent.Body, node)
 			nesting = append(nesting, node)
 			isElem = true

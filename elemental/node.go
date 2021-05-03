@@ -13,11 +13,12 @@ type Node struct {
 	Indent     int
 }
 
-func NewNode(elemType string) *Node {
+func NewNode(elemType string, indent int) *Node {
 	return &Node{
-		Type: elemType,
-		Body: []*Node{},
-		Keys: map[string]string{},
+		Type:   elemType,
+		Body:   []*Node{},
+		Keys:   map[string]string{},
+		Indent: indent,
 	}
 }
 

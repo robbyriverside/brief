@@ -20,7 +20,8 @@ func TestDecoder(t *testing.T) {
 	}
 	t.Logf("%s", node)
 }
-func TestDecodeAll(t *testing.T) {
+
+func TestScanner(t *testing.T) {
 	t.Log(test0)
 	var text elemental.Scanner
 	text.Init(strings.NewReader(test0), 4)
