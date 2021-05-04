@@ -19,6 +19,15 @@ type Scanner struct {
 	atStart   bool
 }
 
+// Init contents of the brief token scanner
+func (s *Scanner) Init(src io.Reader, tabsize int) *Scanner {
+	s.Scanner.Init(src)
+	s.Whitespace = Whitespace
+	s.atStart = true
+	s.TabCount = tabsize
+	return s
+}
+
 // Scan next token from input
 func (s *Scanner) Scan() rune {
 	// reads whitespace and if newline count indent
@@ -77,12 +86,4 @@ func (s *Scanner) readIndent(ch rune) {
 			break
 		}
 	}
-}
-
-func (s *Scanner) Init(src io.Reader, tabsize int) *Scanner {
-	s.Scanner.Init(src)
-	s.Whitespace = Whitespace
-	s.atStart = true
-	s.TabCount = tabsize
-	return s
 }

@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// Encode converts a node into brief format
 func (node *Node) Encode() []byte {
 	var out strings.Builder
 

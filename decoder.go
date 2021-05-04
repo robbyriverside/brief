@@ -7,7 +7,7 @@ import (
 	"text/scanner"
 )
 
-// Decode creates a Node by parsing brief from reader
+// Decode creates a Node by parsing brief format from reader
 func Decode(reader io.Reader) (*Node, error) {
 	var root *Node
 	var text Scanner
@@ -20,7 +20,7 @@ func Decode(reader io.Reader) (*Node, error) {
 		token := text.TokenText()
 		if isFirst {
 			if tt != scanner.Ident {
-				return nil, fmt.Errorf("first line must begin with an identifer: %q", token)
+				return nil, fmt.Errorf("line %d must begin with an identifer: %q", text.Pos().Line, token)
 			}
 			isFirst = false
 			root = NewNode(token, text.Indent)

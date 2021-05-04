@@ -1,4 +1,4 @@
-html   
+html:foo  
     head
         title `My Web Page`
     body class:mybody

@@ -1,0 +1,7 @@
+{{define "node" -}}
+{{repeat .Indent " "}}<{{.Type}} {{- if .Name}} name="{{.Name}}"{{end}} {{- range $key, $val := .Keys}} {{$key}}="{{$val}}"{{end}}>
+{{- .Content}}
+{{repeat .Indent " "}}{{range $node := .Body}}{{ template "node" $node }}{{end -}}
+{{repeat .Indent " "}}</{{.Type}}>
+{{end}}
+{{- template "node" . }}
