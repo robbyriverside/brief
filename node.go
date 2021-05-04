@@ -30,6 +30,10 @@ func (node *Node) String() string {
 	return fmt.Sprintf("%sn(%s, %q, %q = %q)%s", strings.Repeat(" ", node.Indent), node.Type, node.Name, node.Content, node.Keys, body)
 }
 
+func (node *Node) IndentString() string {
+	return strings.Repeat(" ", node.Indent)
+}
+
 func (node *Node) NoBody() bool {
 	return node.Body == nil || len(node.Body) == 0
 }
