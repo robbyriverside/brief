@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// Node in a brief hierarchy
 type Node struct {
 	Type, Name string
 	Keys       map[string]string
@@ -13,6 +14,7 @@ type Node struct {
 	Indent     int
 }
 
+// NewNode create a new Node
 func NewNode(elemType string, indent int) *Node {
 	return &Node{
 		Type:   elemType,
@@ -30,39 +32,48 @@ func (node *Node) String() string {
 	return fmt.Sprintf("%sn(%s, %q, %q = %q)%s", strings.Repeat(" ", node.Indent), node.Type, node.Name, node.Content, node.Keys, body)
 }
 
+// IndentString return a blank string width of indent.
 func (node *Node) IndentString() string {
 	return strings.Repeat(" ", node.Indent)
 }
 
+// NoBody true if the Node has no body
 func (node *Node) NoBody() bool {
 	return node.Body == nil || len(node.Body) == 0
 }
 
+// HasName true if Node has a name
 func (node *Node) HasName() bool {
 	return len(node.Name) > 0
 }
 
+// HasContent true if Node has content
 func (node *Node) HasContent() bool {
 	return len(node.Content) > 0
 }
 
+// HasKeys true if Node has keys
 func (node *Node) HasKeys() bool {
 	return node.Keys == nil || len(node.Keys) == 0
 }
 
-func (node *Node) IsBodyKey() bool {
+// ContentOnly true if Node only has content
+func (node *Node) ContentOnly() bool {
 	return node.NoBody() && !node.HasKeys() && node.HasContent()
 }
 
+// Get a value of a key
 func (node *Node) Get(key string) (string, bool) {
 	val, ok := node.Keys[key]
 	return val, ok
 }
 
+// Put the value of a key
 func (node *Node) Put(key, value string) {
 	node.Keys[key] = value
 }
 
+// Compile adds name and content only body Nodes to the keys
 func (node *Node) Compile() {
 	if node.NoBody() {
 		return
@@ -71,7 +82,7 @@ func (node *Node) Compile() {
 		node.Put("name", node.Name)
 	}
 	for i, n := range node.Body {
-		if n.IsBodyKey() {
+		if n.ContentOnly() {
 			if n.HasName() {
 				node.Put(n.Name, n.Content)
 			} else {

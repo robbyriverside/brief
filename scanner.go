@@ -11,6 +11,7 @@ const (
 	TabCount   = 4
 )
 
+// Scanner for brief language
 type Scanner struct {
 	scanner.Scanner
 	LineStart bool
