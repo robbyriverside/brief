@@ -137,7 +137,7 @@ elem size:33 max:1.4e3
 
 ### Name Key
 
-Because elements often have a "name" keyword to identify them in the document, we give them a special place.  The element type can be a keyword by adding a colon (:) to the end and so it can also have a value, which is the name.
+Because specification elements often have a "name" keyword to identify them in the document, we give them a special place.  The element type can be a keyword by adding a colon (:) to the end and so it can also have a value, which is the name.
 
 ```brief
 body
