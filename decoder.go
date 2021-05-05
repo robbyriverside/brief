@@ -18,14 +18,17 @@ func Decode(reader io.Reader) (*Node, error) {
 	var key string
 	for tt := text.Scan(); tt != scanner.EOF; tt = text.Scan() {
 		token := text.TokenText()
-		if token[0] == '/' {
+		// skip comments
+		if tt == scanner.Comment {
 			continue
 		}
+
+		// first non-blank line in the input
 		if isFirst {
+			isFirst = false
 			if tt != scanner.Ident {
 				return nil, fmt.Errorf("line %d must begin with an identifer: %q", text.Pos().Line, token)
 			}
-			isFirst = false
 			root = NewNode(token, text.Indent)
 			nesting = append(nesting, root)
 			isElem = true
@@ -56,6 +59,7 @@ func Decode(reader io.Reader) (*Node, error) {
 				parent = nesting[leaf]
 			}
 
+			// continuation line
 			if tt == '+' {
 				key = ""
 				continue
@@ -69,6 +73,7 @@ func Decode(reader io.Reader) (*Node, error) {
 			continue
 		}
 
+		// adding a value to a key
 		if addValue {
 			addValue = false
 			switch tt {

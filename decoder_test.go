@@ -48,7 +48,7 @@ func TestScanner(t *testing.T) {
 		"p= Ident indent: 12 start: true line: 8",
 		"id= Ident indent: 12 start: false line: 8",
 		":= \":\" indent: 12 start: false line: 8",
-		"\"X:Y = 2\"= String indent: 12 start: false line: 8",
+		"\"X/Y = 2\"= String indent: 12 start: false line: 8",
 		"`the quick brown fox\njumped over the moon and ran into a cow`= RawString indent: 12 start: false line: 9",
 	}
 	t.Log(test0)
