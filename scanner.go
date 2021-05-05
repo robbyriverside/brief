@@ -26,6 +26,7 @@ func (s *Scanner) Init(src io.Reader, tabsize int) *Scanner {
 	s.Whitespace = Whitespace
 	s.atStart = true
 	s.TabCount = tabsize
+	s.Mode = scanner.ScanIdents | scanner.ScanFloats | scanner.ScanChars | scanner.ScanStrings | scanner.ScanRawStrings | scanner.ScanComments
 	return s
 }
 

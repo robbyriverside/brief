@@ -156,3 +156,16 @@ elem:foo bar:zed
     + more:true range:"3 to 5" `
   more content here`
 ```
+
+### Comments
+
+In the brief format, comments are treated as whitespace.
+
+```brief
+// foo element
+elem:foo bar:zed
+   /* multiline
+      comment */
+    + more:true range:"3 to 5" `
+  more content here`
+```

@@ -18,6 +18,9 @@ func Decode(reader io.Reader) (*Node, error) {
 	var key string
 	for tt := text.Scan(); tt != scanner.EOF; tt = text.Scan() {
 		token := text.TokenText()
+		if token[0] == '/' {
+			continue
+		}
 		if isFirst {
 			if tt != scanner.Ident {
 				return nil, fmt.Errorf("line %d must begin with an identifer: %q", text.Pos().Line, token)

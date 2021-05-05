@@ -21,7 +21,7 @@ func (node *Node) writeLine(out *strings.Builder) {
 		out.WriteString(":" + node.Name)
 	}
 	for key, val := range node.Keys {
-		if strings.ContainsAny(val, ": \"") {
+		if strings.ContainsAny(val, ": \"//") {
 			out.WriteString(fmt.Sprintf(" %s:%q", key, val))
 			continue
 		}
