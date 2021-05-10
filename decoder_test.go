@@ -17,14 +17,72 @@ var test0 string
 //go:embed tests/test1.brf
 var test1 string
 
-func TestDecoder(t *testing.T) {
-	// FIXME: validate results
+//go:embed tests/test2.brf
+var test2 string
+
+//go:embed tests/test3.brf
+var test3 string
+
+func TestDecoder1(t *testing.T) {
 	t.Log(test1)
-	node, err := brief.Decode(strings.NewReader(test1))
+	nodes, err := brief.Decode(strings.NewReader(test1))
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("%s", node)
+	if len(nodes) != 1 {
+		t.Errorf("fail %d != 1", len(nodes))
+	}
+	if nodes[0].Type != "html" {
+		t.Errorf("failed html != %s", nodes[0].Type)
+	}
+	if nodes[0].Name != "foo" {
+		t.Errorf("failed name foo != %s", nodes[0].Name)
+	}
+	for i, node := range nodes {
+		t.Logf("%d> \n%s", i, node)
+	}
+}
+func TestDecoderInclude(t *testing.T) {
+	// FIXME: validate results
+	t.Log(test2)
+	nodes, err := brief.Decode(strings.NewReader(test2))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(nodes) != 1 {
+		t.Errorf("fail %d != 1", len(nodes))
+	}
+	if nodes[0].Type != "pages" {
+		t.Errorf("failed pages != %s", nodes[0].Type)
+	}
+	for i, node := range nodes {
+		t.Logf("%d> \n%s", i, node)
+	}
+}
+func TestDecoderMultiple(t *testing.T) {
+	t.Log(test3)
+	nodes, err := brief.Decode(strings.NewReader(test3))
+	if err != nil {
+		t.Fatal(err)
+	}
+	tests := []func(node *brief.Node) bool{
+		func(node *brief.Node) bool {
+			return node.Type == "html" && node.Name == "foo"
+		},
+		func(node *brief.Node) bool {
+			return node.Type == "pages"
+		},
+		func(node *brief.Node) bool {
+			val, ok := node.Get("class")
+			return node.Type == "html" && ok && val == "foo"
+		},
+	}
+	for i, node := range nodes {
+		if !tests[i](node) {
+			t.Errorf("%d> fail", i)
+		}
+		t.Logf("%d> \n%s", i, node)
+	}
 }
 
 func TestScanner(t *testing.T) {

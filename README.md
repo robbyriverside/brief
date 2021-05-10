@@ -157,6 +157,20 @@ elem:foo bar:zed
   more content here`
 ```
 
+### Include files
+
+To keep files modular the #include directive allows other brief files to be inserted.  The decoder handles indentation for you so each file can be indented naturally from zero.  Include directives insert files so they can be treated like any other sub-element.
+
+```brief
+html
+    head
+        title `include other brief files`
+        #include `standard_headers.brf`
+        link rel:stylesheet href=mystyle.css
+    body
+        h1 `include other brief files`
+```
+
 ### Comments
 
 In the brief format, comments are treated as whitespace.

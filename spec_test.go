@@ -30,10 +30,11 @@ func TestFindSpec(t *testing.T) {
 		},
 	}
 	t.Log(test1)
-	node, err := brief.Decode(strings.NewReader(test1))
+	nodes, err := brief.Decode(strings.NewReader(test1))
 	if err != nil {
 		t.Fatal(err)
 	}
+	node := nodes[0]
 	for _, test := range tests {
 		found := node.FindNode(test.Path...)
 		if found == nil && test.Found {
@@ -69,10 +70,11 @@ func TestGetSpec(t *testing.T) {
 		},
 	}
 	t.Log(test1)
-	node, err := brief.Decode(strings.NewReader(test1))
+	nodes, err := brief.Decode(strings.NewReader(test1))
 	if err != nil {
 		t.Fatal(err)
 	}
+	node := nodes[0]
 	for _, test := range tests {
 		found := node.GetNode(test.Path...)
 		if found == nil && test.Found {

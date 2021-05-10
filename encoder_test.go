@@ -9,10 +9,10 @@ import (
 
 func TestEncoder(t *testing.T) {
 	// FIXME: validate results
-	node, err := brief.Decode(strings.NewReader(test0))
+	nodes, err := brief.Decode(strings.NewReader(test0))
 	if err != nil {
 		t.Fatal(err)
 	}
-	out := node.Encode()
+	out := nodes[0].Encode()
 	t.Logf("%s", string(out))
 }

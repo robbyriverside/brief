@@ -1,0 +1,4 @@
+pages
+    #include `tests/test0.brf`
+    html:second
+        head:foo
