@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 	"text/scanner"
 )
@@ -22,6 +23,7 @@ const (
 	FeatureSet              // Feature value is set
 )
 
+// Decoder for brief formated files
 type Decoder struct {
 	Err            error
 	Roots, Nesting []*Node
@@ -31,25 +33,51 @@ type Decoder struct {
 	State          DecoderState
 	Key, Feature   string
 	Padding        int
+	Dir            string
 }
 
-func NewDecoder(reader io.Reader, tabsize int) *Decoder {
+// NewDecoder from reader with tabsize and optional directory
+// directory is used with #include and defaults to working directory
+func NewDecoder(reader io.Reader, tabsize int, dirs ...string) *Decoder {
+	var err error
+	var dir string
+	if len(dirs) > 0 {
+		dir = dirs[0]
+	} else {
+		dir, err = os.Getwd()
+		if err != nil {
+			dir = "/"
+		}
+	}
 	var decoder Decoder
+	decoder.Dir = dir
+	decoder.Err = err
 	decoder.Text.Init(reader, tabsize)
 	decoder.Roots = make([]*Node, 0)
 	decoder.Nesting = make([]*Node, 0)
 	return &decoder
 }
 
-func (dec *Decoder) TopLevel() bool {
+// Error added to decoder and returned
+func (dec *Decoder) Error(msg string) error {
+	pos := dec.Text.Pos()
+	dec.Err = fmt.Errorf("%s at %q on pos %d:%d", msg, dec.Token, pos.Line, pos.Offset)
+	return dec.Err
+}
+
+// topLevel returns true if
+func (dec *Decoder) topLevel() bool {
 	return len(dec.Nesting) == 0
 }
 
-func (dec *Decoder) Indent() int {
+// indent adds padding to indent
+func (dec *Decoder) indent() int {
 	return dec.Text.Indent + dec.Padding
 }
 
-func (dec *Decoder) Parent() *Node {
+// parent returns parent node, if any
+// reduces nesting
+func (dec *Decoder) parent() *Node {
 	size := len(dec.Nesting)
 	if size > 0 {
 		return dec.Nesting[size-1]
@@ -64,7 +92,7 @@ func (dec *Decoder) next() bool {
 }
 
 func (dec *Decoder) setName() {
-	parent := dec.Parent()
+	parent := dec.parent()
 	if parent == nil {
 		dec.Error("SetName parent not found")
 		return
@@ -72,14 +100,8 @@ func (dec *Decoder) setName() {
 	parent.Name = strings.Trim(dec.Token, "\"")
 }
 
-func (dec *Decoder) Error(msg string) error {
-	pos := dec.Text.Pos()
-	dec.Err = fmt.Errorf("%s at %q on pos %d:%d", msg, dec.Token, pos.Line, pos.Offset)
-	return dec.Err
-}
-
 func (dec *Decoder) setValue() {
-	parent := dec.Parent()
+	parent := dec.parent()
 	if parent == nil {
 		dec.Error("SetValue parent not found")
 		return
@@ -91,7 +113,7 @@ func (dec *Decoder) setValue() {
 }
 
 func (dec *Decoder) setContent() {
-	parent := dec.Parent()
+	parent := dec.parent()
 	if parent == nil {
 		dec.Error("SetContent parent not found")
 		return
@@ -112,7 +134,7 @@ func (dec *Decoder) findParent(indent int) *Node {
 }
 
 func (dec *Decoder) addNode() {
-	node := NewNode(dec.Token, dec.Indent())
+	node := NewNode(dec.Token, dec.indent())
 	parent := dec.findParent(node.Indent)
 	if parent != nil {
 		parent.Body = append(parent.Body, node)
@@ -233,12 +255,16 @@ func (dec *Decoder) contentFeature() {
 }
 
 func (dec *Decoder) includeFile(filename string) error {
+	if !filepath.IsAbs(filename) {
+		filename = filepath.Join(dec.Dir, filename)
+	}
 	file, err := os.Open(filename)
 	if err != nil {
 		return err
 	}
-	idec := NewDecoder(file, dec.Text.TabCount)
-	idec.Padding = dec.Indent()
+	dir := filepath.Dir(filename)
+	idec := NewDecoder(file, dec.Text.TabCount, dir)
+	idec.Padding = dec.indent()
 	nodes, err := idec.Decode()
 	if err != nil {
 		return err

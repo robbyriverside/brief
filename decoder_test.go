@@ -25,7 +25,8 @@ var test3 string
 
 func TestDecoder1(t *testing.T) {
 	t.Log(test1)
-	nodes, err := brief.Decode(strings.NewReader(test1))
+	dec := brief.NewDecoder(strings.NewReader(test1), 4, "tests")
+	nodes, err := dec.Decode()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -45,7 +46,8 @@ func TestDecoder1(t *testing.T) {
 func TestDecoderInclude(t *testing.T) {
 	// FIXME: validate results
 	t.Log(test2)
-	nodes, err := brief.Decode(strings.NewReader(test2))
+	dec := brief.NewDecoder(strings.NewReader(test2), 4, "tests")
+	nodes, err := dec.Decode()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -61,7 +63,8 @@ func TestDecoderInclude(t *testing.T) {
 }
 func TestDecoderMultiple(t *testing.T) {
 	t.Log(test3)
-	nodes, err := brief.Decode(strings.NewReader(test3))
+	dec := brief.NewDecoder(strings.NewReader(test3), 4, "tests")
+	nodes, err := dec.Decode()
 	if err != nil {
 		t.Fatal(err)
 	}

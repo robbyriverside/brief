@@ -2,7 +2,43 @@
 
 In short, the brief format is XML with minimal syntax and indented blocks like Python.
 
-This repo contains readers and translators for the brief format written in Go.
+This repo contains a decoder for the brief format written in Go.
+
+## Brief Example
+
+A sample html page written in brief.
+
+```brief
+html
+    head
+        title `My Web Page`
+    body class:mybody
+        h1 `My Web Page`
+
+        div id:main class:myblock
+            p id:X `the quick brown fox
+jumped over the moon and ran into a cow`
+```
+
+Here is the equivalent in HTML.
+
+```html
+<html>
+<head>
+    <title>My Web Page</title>
+</head>
+<body class="mybody">
+    <h1>My Web Page</h1>
+
+    <div id="main" class="myblock">
+        <p id="X">the quick brown fox
+jumped over the moon and ran into a cow</p>
+    </div>
+</body>
+</html>
+```
+
+Further, documentation of the format below.
 
 ## Why?
 
@@ -73,7 +109,7 @@ Contents of templates/xmlout.tmpl:
 
 ## Brief Format
 
-With one exception, the + operator (see below), the first token on each line is the element type.  After the element type, is a series of key-value pairs, optionally followed by a text body.  Child elements are indented on the lines below the parent element.
+The first token on each line is the element type.  After the element type, is a series of key-value pairs, optionally followed by a text body.  Child elements are indented on the lines below the parent element.
 
 ### Example
 
@@ -87,7 +123,7 @@ html
     body
 ```
 
-Sub-structures are indented to identify a sub-block.  The first identifier on each line is an element name or type.  The back-tic contains multiline text which forms the contents of an element.  The back-tic must be after any key-value pairs.
+Sub-structures are indented to identify a sub-block.  The first identifier on each line is an element name or type.  The back-tic contains multiline text which forms the text contents of an element.  The back-tic must be after any key-value pairs.
 
 ```brief
 html
