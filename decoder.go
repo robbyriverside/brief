@@ -236,7 +236,7 @@ func (dec *Decoder) Decode() ([]*Node, error) {
 			switch dec.State {
 			case OnValue, OnName:
 				dec.State = NegValue
-			case KeyElem, KeyEmpty, NewLine:
+			default:
 				return nil, dec.Error("invalid minus")
 			}
 		case ':':
