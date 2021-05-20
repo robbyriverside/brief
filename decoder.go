@@ -22,6 +22,7 @@ const (
 	OnFeature               // Exec Feature
 	FeatureSet              // Feature value is set
 	NegValue
+	OnComment
 )
 
 // Decoder for brief formated files
@@ -164,7 +165,7 @@ func (dec *Decoder) Decode() ([]*Node, error) {
 		}
 		if dec.Text.LineStart {
 			switch dec.State {
-			case KeyElem, KeyEmpty:
+			case KeyElem, KeyEmpty, OnComment:
 				dec.State = NewLine
 			default:
 				return nil, dec.Error("invalid stray token at end of line above")
@@ -172,7 +173,7 @@ func (dec *Decoder) Decode() ([]*Node, error) {
 		}
 		switch dec.ScanType {
 		case scanner.Comment: // skip comments
-			dec.State = KeyEmpty
+			dec.State = OnComment
 		case scanner.Ident:
 			switch dec.State {
 			case NewLine:

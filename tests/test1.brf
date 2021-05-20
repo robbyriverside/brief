@@ -7,7 +7,7 @@ html:foo
             + one:-2.0
         // comment
         /* more
-        comments */  nnn:foo // why is this allowed?
+        comments */  
         div:main class:myblock
             p id:"X-Y = 2" `the - quick brown fox
 jumped over the moon and ran into a cow`
