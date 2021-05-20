@@ -50,7 +50,7 @@ Brief is the primary input format for the Brevity App Meta-Generator.
 
 ## Brief Library
 
-### Brief Encoder
+### Brief Decoder
 
 Parses the brief format and creates a Node object.
 
@@ -68,12 +68,12 @@ This is more efficient than using reflection to map to an arbitrary structure.
 
 ```go
 var in io.Reader
-rootNode, err := brief.Decode(in)
+rootNodes, err := brief.Decode(in)
 ```
 
-The Node structure can be walked to convert to a custom struct, if required.
+The Node structure can be walked to convert to a custom struct, if required.  Multiple top-level forms are allowed and returned as an array of nodes by the decoder.
 
-### Brief Decoder
+### Brief Encoder
 
 Writes the Node object in brief format.
 
@@ -93,18 +93,18 @@ var out io.Writer
 err := node.WriteXML(out)
 ```
 
-XML output uses a go text template.  This serves as an example of using brief with a template.
+XML output uses a template.  This serves as an example of using brief with a template.
 
 Contents of templates/xmlout.tmpl:
 
 ```template
-{{define "node" -}}
-{{.IndentString}}<{{.Type}} {{- if .Name}} name="{{.Name}}"{{end}} {{- range $key, $val := .Keys}} {{$key}}="{{$val}}"{{end}}>
-{{- .Content}}
-{{.IndentString}}{{range $node := .Body}}{{ template "node" $node }}{{end -}}
-{{.IndentString}}</{{.Type}}>
+{{define "node"}}
+{{.IndentString}}<{{.Type}}{{if .Name}} name="{{.Name}}"{{end}}{{range $key, $val := .Keys}} {{$key}}="{{$val}}"{{end}}>
+{{- if .Content}}{{.Content}}{{ if not .Body}}</{{.Type}}>{{end}}{{end}}
+{{- if .Body}}{{.IndentString}}{{range .Body}}{{ template "node" . }}{{end}}
+{{.IndentString}}</{{.Type}}>{{end -}}
 {{end}}
-{{- template "node" . }}
+{{- template "node" .}}
 ```
 
 ## Brief Format
