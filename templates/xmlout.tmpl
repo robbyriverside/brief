@@ -1,7 +1,7 @@
-{{define "node" -}}
-{{.IndentString}}<{{.Type}} {{- if .Name}} name="{{.Name}}"{{end}} {{- range $key, $val := .Keys}} {{$key}}="{{$val}}"{{end}}>
-{{- .Content}}
-{{.IndentString}}{{range $node := .Body}}{{ template "node" $node }}{{end -}}
-{{.IndentString}}</{{.Type}}>
+{{define "node"}}
+{{.IndentString}}<{{.Type}}{{if .Name}} name="{{.Name}}"{{end}}{{range $key, $val := .Keys}} {{$key}}="{{$val}}"{{end}}>
+{{- if .Content}}{{.Content}}{{ if not .Body}}</{{.Type}}>{{end}}{{end}}
+{{- if .Body}}{{.IndentString}}{{range $node := .Body}}{{ template "node" $node }}{{end}}
+{{.IndentString}}</{{.Type}}>{{end -}}
 {{end}}
-{{- template "node" . }}
+{{- template "node" .}}
