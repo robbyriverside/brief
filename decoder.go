@@ -21,6 +21,7 @@ const (
 	OnValue                 // Put key-value
 	OnFeature               // Exec Feature
 	FeatureSet              // Feature value is set
+	NegValue
 )
 
 // Decoder for brief formated files
@@ -61,7 +62,7 @@ func NewDecoder(reader io.Reader, tabsize int, dirs ...string) *Decoder {
 // Error added to decoder and returned
 func (dec *Decoder) Error(msg string) error {
 	pos := dec.Text.Pos()
-	dec.Err = fmt.Errorf("%s at %q on pos %d:%d", msg, dec.Token, pos.Line, pos.Offset)
+	dec.Err = fmt.Errorf("%s on %q at %d:%d", msg, dec.Token, pos.Line, pos.Column-len(dec.Token))
 	return dec.Err
 }
 
@@ -100,7 +101,7 @@ func (dec *Decoder) setName() {
 	parent.Name = strings.Trim(dec.Token, "\"")
 }
 
-func (dec *Decoder) setValue() {
+func (dec *Decoder) setValue(neg bool) {
 	parent := dec.parent()
 	if parent == nil {
 		dec.Error("SetValue parent not found")
@@ -108,6 +109,10 @@ func (dec *Decoder) setValue() {
 	}
 	if len(dec.Key) == 0 {
 		dec.Error("SetValue no key")
+	}
+	if neg && dec.Token[0] != '"' {
+		parent.Put(dec.Key, "-"+dec.Token)
+		return
 	}
 	parent.Put(dec.Key, strings.Trim(dec.Token, "\""))
 }
@@ -152,15 +157,22 @@ func Decode(reader io.Reader) ([]*Node, error) {
 
 // Decode creates a Node by parsing brief format from reader
 func (dec *Decoder) Decode() ([]*Node, error) {
+	dec.State = KeyEmpty
 	for dec.next() {
 		if dec.Err != nil {
 			return nil, dec.Err
 		}
 		if dec.Text.LineStart {
-			dec.State = NewLine
+			switch dec.State {
+			case KeyElem, KeyEmpty:
+				dec.State = NewLine
+			default:
+				return nil, dec.Error("invalid stray token at end of line above")
+			}
 		}
 		switch dec.ScanType {
 		case scanner.Comment: // skip comments
+			dec.State = KeyEmpty
 		case scanner.Ident:
 			switch dec.State {
 			case NewLine:
@@ -177,8 +189,10 @@ func (dec *Decoder) Decode() ([]*Node, error) {
 				dec.setName()
 				dec.Key = ""
 				dec.State = KeyEmpty
+			case NegValue:
+				return nil, dec.Error("invalid minus before symbol")
 			case OnValue:
-				dec.setValue()
+				dec.setValue(false)
 				dec.Key = ""
 				dec.State = KeyEmpty
 			case OnFeature:
@@ -188,19 +202,25 @@ func (dec *Decoder) Decode() ([]*Node, error) {
 				return nil, dec.Error("invalid identifier found")
 			}
 		case scanner.String, scanner.Int, scanner.Float:
+			if dec.State == NegValue && dec.ScanType == scanner.String {
+				return nil, dec.Error("invalid minus before string")
+			}
 			switch dec.State {
 			case OnName:
 				dec.setName()
 				dec.Key = ""
 				dec.State = KeyEmpty
-			case OnValue:
-				dec.setValue()
+			case OnValue, NegValue:
+				dec.setValue(dec.State == NegValue)
 				dec.Key = ""
 				dec.State = KeyEmpty
 			default:
 				return nil, dec.Error("invalid value found")
 			}
 		case scanner.RawString:
+			if dec.State == NegValue {
+				return nil, dec.Error("invalid minus before content")
+			}
 			switch dec.State {
 			case KeyElem, KeyEmpty:
 				dec.Key = ""
@@ -208,8 +228,16 @@ func (dec *Decoder) Decode() ([]*Node, error) {
 				dec.State = KeyEmpty
 			case FeatureSet:
 				dec.contentFeature()
+				dec.State = KeyEmpty
 			default:
 				return nil, dec.Error("invalid content found")
+			}
+		case '-':
+			switch dec.State {
+			case OnValue, OnName:
+				dec.State = NegValue
+			case KeyElem, KeyEmpty, NewLine:
+				return nil, dec.Error("invalid minus")
 			}
 		case ':':
 			switch dec.State {

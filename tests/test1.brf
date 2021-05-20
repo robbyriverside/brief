@@ -4,10 +4,10 @@ html:foo
         title `My Web Page`
     body class:mybody
         h1 `My Web Page`
-            + one:2.0
+            + one:-2.0
         // comment
         /* more
-        comments */
+        comments */  nnn:foo // why is this allowed?
         div:main class:myblock
-            p id:"X/Y = 2" `the quick brown fox
+            p id:"X-Y = 2" `the - quick brown fox
 jumped over the moon and ran into a cow`

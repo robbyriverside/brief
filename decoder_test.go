@@ -143,9 +143,19 @@ func TestScannerCases(t *testing.T) {
 		Tokens []string
 	}{
 		{
-			Line:   "       elem:foo",
+			Line:   "       \"-42.0\":foo",
 			Indent: 7,
-			Tokens: []string{"elem", ":", "foo"},
+			Tokens: []string{"\"-42.0\"", ":", "foo"},
+		},
+		{
+			Line:   "       foo:-42.0",
+			Indent: 7,
+			Tokens: []string{"foo", ":", "-", "42.0"},
+		},
+		{
+			Line:   "       +42.0:foo",
+			Indent: 7,
+			Tokens: []string{"+", "42.0", ":", "foo"},
 		},
 		{
 			Line:   "   \nelem `some text`",
@@ -173,7 +183,7 @@ func TestScannerCases(t *testing.T) {
 			}
 		}
 		if !reflect.DeepEqual(test.Tokens, tokens) {
-			t.Errorf("%d> invalid test tokens %s != %s", i, test.Tokens, tokens)
+			t.Errorf("%d> invalid test tokens %q != %q", i, test.Tokens, tokens)
 		}
 	}
 }

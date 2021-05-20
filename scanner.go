@@ -8,6 +8,8 @@ import (
 const (
 	Whitespace = 1<<' ' | 1<<'\t'
 	Newline    = 1<<'\n' | 1<<'\r'
+	Syntax     = 1<<':' | 1<<'/' | 1<<'+' | 1<<'#' | 1<<'"'
+	All        = Whitespace | Syntax
 	TabCount   = 4
 )
 
@@ -26,7 +28,7 @@ func (s *Scanner) Init(src io.Reader, tabsize int) *Scanner {
 	s.Whitespace = Whitespace
 	s.atStart = true
 	s.TabCount = tabsize
-	s.Mode = scanner.ScanIdents | scanner.ScanFloats | scanner.ScanChars | scanner.ScanStrings | scanner.ScanRawStrings | scanner.ScanComments
+	s.Mode = scanner.ScanIdents | scanner.ScanStrings | scanner.ScanRawStrings | scanner.ScanComments | scanner.ScanFloats
 	return s
 }
 
