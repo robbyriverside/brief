@@ -72,13 +72,27 @@ func (node *Node) Lookup(spec string) string {
 	return ctx.Name
 }
 
-// Join calls Lookup on each spec and Joins them using sep
-func (node *Node) Join(sep string, specs ...string) string {
+// Slice calls Lookup on each spec and returns the slice
+func (node *Node) Slice(specs ...string) []string {
 	found := []string{}
 	for _, spec := range specs {
 		found = append(found, node.Lookup(spec))
 	}
-	return strings.Join(found, sep)
+	return found
+}
+
+// Join calls Lookup on each spec and Joins them using sep
+func (node *Node) Join(sep string, specs ...string) string {
+	return strings.Join(node.Slice(specs...), sep)
+}
+
+// Printf calls Lookup on each spec and prints them using format
+func (node *Node) Printf(format string, specs ...string) string {
+	found := make([]interface{}, 0)
+	for _, spec := range specs {
+		found = append(found, node.Lookup(spec))
+	}
+	return fmt.Sprintf(format, found...)
 }
 
 // Context is a surrounding element found by Name or Type

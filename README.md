@@ -107,6 +107,61 @@ Contents of templates/xmlout.tmpl:
 {{- template "node" .}}
 ```
 
+### Template Methods
+
+One of the primary targets of the Brief format is use in go text/templates.  There are many helpful methods to assist in template building.
+
+#### Context
+
+Find a node in the elements that contain this node.  Context will walk up the Parent hierarchy seeking a specific element, matching name first and then matching type.  
+
+```
+{{with .Context "project" }}
+    print .Keys.id
+{{end}}
+```
+
+#### Value Spec
+
+A value spec is a string that can be used to locate a key value or name in a context element.
+
+A single name, refers to the Name of the context element.  {context}.Name
+
+A dotted pair refers to a key value from the context element. {context}.{key}
+
+#### Lookup
+
+Lookup is a node method which gets a context value from a value spec.
+
+```template
+{{ .Lookup "project.id" }}
+{{ .Lookup "project" }}
+```
+
+#### Slice
+
+Slice is a node method which creates a slice of strings from a sequence of value specs.
+
+```template
+{{ print .Slice "project.id" "project" }}
+```
+
+#### Join
+
+Join is a node method which combines sequence of strings using a separator from a sequence of value specs.
+
+```template
+{{ print .Join "/" "project.id" "project" }}
+```
+
+#### Printf
+
+Printf is a node method which applies a sequence of strings using a format from a sequence of value specs.
+
+```template
+{{ .Printf "%s:%s" "project.id" "project" }}
+```
+
 ## Brief Format
 
 The first token on each line is the element type.  After the element type, is a series of key-value pairs, optionally followed by a text body.  Child elements are indented on the lines below the parent element.
