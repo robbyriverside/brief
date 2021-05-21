@@ -78,9 +78,9 @@ The Node structure can be walked to convert to a custom struct, if required.  Mu
 Writes the Node object in brief format.
 
 ```go
-var node Node
+var Node Node
 var out io.Writer
-err := node.Encode(out)
+err := Node.Encode(out)
 ```
 
 ### Brief XML Output
@@ -88,23 +88,23 @@ err := node.Encode(out)
 Writes the Node object in XML format.
 
 ```go
-var node Node
+var Node Node
 var out io.Writer
-err := node.WriteXML(out)
+err := Node.WriteXML(out)
 ```
 
 XML output uses a template.  This serves as an example of using brief with a template.
 
 Contents of templates/xmlout.tmpl:
 
-```template
-{{define "node"}}
+```text/template
+{{define "Node"}}
 {{.IndentString}}<{{.Type}}{{if .Name}} name="{{.Name}}"{{end}}{{range $key, $val := .Keys}} {{$key}}="{{$val}}"{{end}}>
 {{- if .Content}}{{.Content}}{{ if not .Body}}</{{.Type}}>{{end}}{{end}}
-{{- if .Body}}{{.IndentString}}{{range .Body}}{{ template "node" . }}{{end}}
+{{- if .Body}}{{.IndentString}}{{range .Body}}{{ template "Node" . }}{{end}}
 {{.IndentString}}</{{.Type}}>{{end -}}
 {{end}}
-{{- template "node" .}}
+{{- template "Node" .}}
 ```
 
 ### Template Methods
@@ -113,9 +113,9 @@ One of the primary targets of the Brief format is use in go text/templates.  The
 
 #### Context
 
-Find a node in the elements that contain this node.  Context will walk up the Parent hierarchy seeking a specific element, matching name first and then matching type.  
+Find a Node in the elements that contain this Node.  Context will walk up the Parent hierarchy seeking a specific element, matching name first and then matching type.  
 
-```
+```text/template
 {{with .Context "project" }}
     print .Keys.id
 {{end}}
@@ -131,34 +131,34 @@ A dotted pair refers to a key value from the context element. {context}.{key}
 
 #### Lookup
 
-Lookup is a node method which gets a context value from a value spec.
+Lookup is a Node method which gets a context value from a value spec.
 
-```template
+```text/template
 {{ .Lookup "project.id" }}
 {{ .Lookup "project" }}
 ```
 
 #### Slice
 
-Slice is a node method which creates a slice of strings from a sequence of value specs.
+Slice is a Node method which creates a slice of strings from a sequence of value specs.
 
-```template
+```text/template
 {{ print .Slice "project.id" "project" }}
 ```
 
 #### Join
 
-Join is a node method which combines sequence of strings using a separator from a sequence of value specs.
+Join is a Node method which combines sequence of strings using a separator from a sequence of value specs.
 
-```template
+```text/template
 {{ print .Join "/" "project.id" "project" }}
 ```
 
 #### Printf
 
-Printf is a node method which applies a sequence of strings using a format from a sequence of value specs.
+Printf is a Node method which applies a sequence of strings using a format from a sequence of value specs.
 
-```template
+```text/template
 {{ .Printf "%s:%s" "project.id" "project" }}
 ```
 
