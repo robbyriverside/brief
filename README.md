@@ -46,19 +46,20 @@ The unique feature of XML having both keyword parameters and nested content body
 
 Brief is not intended to be a data interchange format.  However, it can be easily converted to XML.  
 
-Brief is the primary input format for the Brevity App Meta-Generator.
+Brief is the primary input format for the Brevity Code Generator.
 
 ## Brief Library
 
 ### Brief Decoder
 
-Parses the brief format and creates a Node object.
+Parses the brief format and creates a slice of Node objects.
 
 ```go
 type Node struct {
 	Type, Name string
 	Keys       map[string]string
 	Body       []*Node
+	Parent     *Node
 	Content    string
 	Indent     int
 }
