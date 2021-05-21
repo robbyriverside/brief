@@ -143,6 +143,7 @@ func (dec *Decoder) addNode() {
 	node := NewNode(dec.Token, dec.indent())
 	parent := dec.findParent(node.Indent)
 	if parent != nil {
+		node.Parent = parent
 		parent.Body = append(parent.Body, node)
 	} else {
 		dec.Roots = append(dec.Roots, node)
