@@ -151,6 +151,20 @@ func (dec *Decoder) addNode() {
 	dec.Nesting = append(dec.Nesting, node)
 }
 
+// DecodeFile into brief Nodes
+func DecodeFile(filename string) ([]*Node, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	nodes, err := Decode(file)
+	if err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
 // Decode creates a Node by parsing brief format from reader
 func Decode(reader io.Reader) ([]*Node, error) {
 	dec := NewDecoder(reader, 4)

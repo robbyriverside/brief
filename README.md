@@ -42,7 +42,7 @@ Further, documentation of the format below.
 
 ## Why?
 
-The unique feature of XML having both keyword parameters and nested content body is useful when writing a specification.  However, writing XML by hand can be tedious because of all the syntax.  The primary design goal of brief to have the same structure as XML but easy to write.
+The unique feature of XML having both keyword parameters and nested content body is useful when writing a specification.  However, writing XML by hand can be tedious because of the verbose syntax.  The primary design goal of brief to have the same structure as XML but easy to write.
 
 Brief is not intended to be a data interchange format.  However, it can be easily converted to XML.  
 
@@ -65,14 +65,14 @@ type Node struct {
 }
 ```
 
-This is more efficient than using reflection to map to an arbitrary structure.  
+This is more efficient than using reflection to map to an arbitrary structure and the Node object has many helpful methods for writing templates.
 
 ```go
 var in io.Reader
 rootNodes, err := brief.Decode(in)
 ```
 
-The Node structure can be walked to convert to a custom struct, if required.  Multiple top-level forms are allowed and returned as an array of nodes by the decoder.
+Multiple top-level forms are allowed and returned as an array of Nodes by the decoder.
 
 ### Brief Encoder
 
