@@ -46,7 +46,7 @@ The unique feature of XML having both keyword parameters and nested content body
 
 Brief is not intended to be a data interchange format.  However, it can be easily converted to XML.  
 
-Brief is the primary input format for the Brevity Code Generator.
+Brief is the primary input format for the [Brevity Code Generator](https://github.com/robbyriverside/brevity).
 
 ## Brief Library
 

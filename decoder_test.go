@@ -76,7 +76,7 @@ func TestDecoderMultiple(t *testing.T) {
 			return node.Type == "pages"
 		},
 		func(node *brief.Node) bool {
-			val, ok := node.Get("class")
+			val, ok := node.Keys["class"]
 			return node.Type == "html" && ok && val == "foo"
 		},
 	}
