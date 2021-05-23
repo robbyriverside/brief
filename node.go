@@ -42,7 +42,7 @@ func (node *Node) String() string {
 
 // Key get key value from node or return {unknown key}
 func (node *Node) Key(name string) string {
-	val, ok := node.Get(name)
+	val, ok := node.Keys[name]
 	if !ok {
 		return "{unknown key}"
 	}
@@ -139,12 +139,6 @@ func (node *Node) HasKeys() bool {
 // ContentOnly true if Node only has content
 func (node *Node) ContentOnly() bool {
 	return node.NoBody() && !node.HasKeys() && node.HasContent()
-}
-
-// Get a value of a key
-func (node *Node) Get(key string) (string, bool) {
-	val, ok := node.Keys[key]
-	return val, ok
 }
 
 // Put the value of a key
