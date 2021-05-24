@@ -6,11 +6,12 @@ import (
 )
 
 const (
+	// Whitespace no newlines
 	Whitespace = 1<<' ' | 1<<'\t'
-	Newline    = 1<<'\n' | 1<<'\r'
-	Syntax     = 1<<':' | 1<<'/' | 1<<'+' | 1<<'#' | 1<<'"'
-	All        = Whitespace | Syntax
-	TabCount   = 4
+	// Newline no space
+	Newline = 1<<'\n' | 1<<'\r'
+	// TabCount default
+	TabCount = 4
 )
 
 // Scanner for brief language

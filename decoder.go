@@ -9,8 +9,10 @@ import (
 	"text/scanner"
 )
 
+// DecoderState constants
 type DecoderState int
 
+// States of the decoder
 const (
 	Unknown    DecoderState = iota
 	NewLine                 // LineStart
@@ -21,8 +23,8 @@ const (
 	OnValue                 // Put key-value
 	OnFeature               // Exec Feature
 	FeatureSet              // Feature value is set
-	NegValue
-	OnComment
+	NegValue                // Minus sign instead of a value
+	OnComment               // A comment
 )
 
 // Decoder for brief formated files

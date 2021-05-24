@@ -56,12 +56,12 @@ Parses the brief format and creates a slice of Node objects.
 
 ```go
 type Node struct {
-	Type, Name string
-	Keys       map[string]string
-	Body       []*Node
-	Parent     *Node
-	Content    string
-	Indent     int
+    Type, Name string
+    Keys       map[string]string
+    Body       []*Node
+    Parent     *Node
+    Content    string
+    Indent     int
 }
 ```
 
