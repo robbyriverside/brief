@@ -308,6 +308,7 @@ func (dec *Decoder) includeFile(filename string) error {
 	if err != nil {
 		return err
 	}
+	defer file.Close()
 	dir := filepath.Dir(filename)
 	idec := NewDecoder(file, dec.Text.TabCount, dir)
 	idec.Padding = dec.indent()

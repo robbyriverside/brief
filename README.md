@@ -72,6 +72,10 @@ var in io.Reader
 rootNodes, err := brief.Decode(in)
 ```
 
+```go
+rootNodes, err := brief.DecodeFile("spec.brief")
+```
+
 Multiple top-level forms are allowed and returned as an array of Nodes by the decoder.
 
 ### Brief Encoder
