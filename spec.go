@@ -8,13 +8,14 @@ import (
 // Spec for node Type:Name
 type Spec struct {
 	Type, Name string
+	NoName     bool
 }
 
 // NewSpec from spec of Type:Name or just Type
 func NewSpec(spec string) *Spec {
 	pos := strings.IndexRune(spec, ':')
 	if pos < 0 {
-		return &Spec{Type: spec}
+		return &Spec{Type: spec, NoName: true}
 	}
 	return &Spec{Type: spec[:pos], Name: spec[pos+1:]}
 }
@@ -26,64 +27,53 @@ func (s *Spec) String() string {
 	return s.Type
 }
 
-// Match spec to node
-// If spec.Name is empty then match Type only
+// Match spec for node
 func (s *Spec) Match(node *Node) bool {
 	if s.Type != node.Type {
 		return false
 	}
-	if len(s.Name) > 0 && s.Name != node.Name {
-		return false
-	}
-	return true
-}
-
-// Same spec for node
-func (s *Spec) Same(node *Node) bool {
-	if s.Type != node.Type {
-		return false
+	if s.NoName {
+		return true
 	}
 	if s.Name != node.Name {
 		return false
 	}
+
 	return true
 }
 
-// FindNode a subnode by spec
-// spec values can be Type:Name  or just Type
-// if not found returns nil
-func (node *Node) FindNode(path ...string) *Node {
-	result := node
-	for _, spec := range path {
-		s := NewSpec(spec)
-		var found bool
-		for _, n := range result.Body {
-			if s.Match(n) {
-				found = true
-				result = n
-				break
-			}
-		}
-		if !found {
-			return nil
-		}
-	}
-	return result
+// Find searches for a node matching name in the body of this node
+// The name is a node type or a type:name pair
+func (node *Node) Find(name string) *Node {
+	return NewSpec(name).Find(node)
 }
 
-// GetNode a subnode by spec
-// spec values can be Type:Name  or just Type
-// spec must match exactly
-// if not found returns nil
-func (node *Node) GetNode(path ...string) *Node {
-	result := node
-	for _, spec := range path {
-		s := NewSpec(spec)
+// Find looks for a specific node in the body that matches spec
+func (s *Spec) Find(node *Node) *Node {
+	for _, sub := range node.Body {
+		if s.Match(sub) {
+			return sub
+		}
+	}
+	for _, sub := range node.Body {
+		if found := s.Find(sub); found != nil {
+			return found
+		}
+	}
+	return nil
+}
+
+// Child follow a path to a specific node in the body
+// path elements are node type or type:name pair
+func (node *Node) Child(path ...string) *Node {
+	at := node
+	for _, name := range path {
+		spec := NewSpec(name)
 		var found bool
-		for _, n := range result.Body {
-			if s.Same(n) {
+		for _, next := range at.Body {
+			if spec.Match(next) {
 				found = true
-				result = n
+				at = next
 				break
 			}
 		}
@@ -91,5 +81,5 @@ func (node *Node) GetNode(path ...string) *Node {
 			return nil
 		}
 	}
-	return result
+	return at
 }

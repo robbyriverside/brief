@@ -95,15 +95,13 @@ func (node *Node) Printf(format string, specs ...string) string {
 	return fmt.Sprintf(format, found...)
 }
 
-// Context is a surrounding element found by Name or Type
-// name is compared to node.Name first and then node.Type
+// Context is a surrounding element found by node spec
+// name is either a type or a type:name pair
 func (node *Node) Context(name string) *Node {
+	spec := NewSpec(name)
 	parent := node.Parent
 	for parent != nil {
-		if parent.Name == name {
-			return parent
-		}
-		if parent.Type == name {
+		if spec.Match(parent) {
 			return parent
 		}
 		parent = parent.Parent

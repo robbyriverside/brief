@@ -114,16 +114,47 @@ Contents of templates/xmlout.tmpl:
 
 ### Template Methods
 
-One of the primary targets of the Brief format is use in go text/templates.  There are many helpful methods to assist in template building.
+One of the primary targets of the Brief format is use in go text/templates.  There are many helpful node methods to assist in template building.
+
+#### Node Spec
+
+A node spec is a node type or a type:name pair.  This is used to identify a node when searching for it.
+
+Here are some examples with an element foo with a name bar:
+
+"foo:bar"  match both type and name.
+"foo"      matches only the type without considering name.
+"foo:"     matches the type and requires the name to be empty.
 
 #### Context
 
-Find a Node in the elements that contain this Node.  Context will walk up the Parent hierarchy seeking a specific element, matching name first and then matching type.  
+Find a Node in the elements that contain this Node.  
+
+Context will walk up the Parent hierarchy seeking a node with matches the node spec.  
 
 ```text/template
 {{with .Context "project" }}
     print .Keys.id
 {{end}}
+```
+
+#### Find
+
+Find is a node method that searches the children for a node with a specific node spec.
+
+```text/template
+{{ .Find "foo" }}        // search all the children for any node of type "foo"
+{{ .Find "foo:bar" }}    // search all the children for any node of type "foo" whose name is "bar"
+```
+
+#### Child
+
+Child is a node method that follows a path to a specific child node.
+The path is a series of node specs which must match each node as it walks down the children.
+
+```text/template
+{{ .Child "foo" "zed" "x" }}  // return the "x" node child of "zed" node child of "foo" node child of the current node
+{{ .Child "foo:bar" }}        // return a child of the current node which is of type "foo" and named "bar"
 ```
 
 #### Value Spec
