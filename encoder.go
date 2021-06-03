@@ -53,7 +53,10 @@ func (node *Node) write(out *strings.Builder) []*Node {
 	indent := strings.Repeat(" ", node.Indent)
 	out.WriteString(indent + node.Type)
 	if len(node.Name) > 0 {
-		out.WriteString(":" + node.Name)
+		if NoQuote(node.Name) {
+			out.WriteString(":" + node.Name)
+		}
+		out.WriteString(fmt.Sprintf(":%q", node.Name))
 	}
 	for key, val := range node.Keys {
 		if NoQuote(val) {
