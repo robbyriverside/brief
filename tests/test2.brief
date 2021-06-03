@@ -1,4 +1,4 @@
 pages
-    #include `test0.brf`
+    #include `test0.brief`
     htmlX:second
         head:foo

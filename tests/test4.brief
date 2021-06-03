@@ -1,0 +1,3 @@
+mycli:"go-flags"
+    command:one
+    command:two

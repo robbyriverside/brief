@@ -11,17 +11,20 @@ import (
 	"github.com/robbyriverside/brief"
 )
 
-//go:embed tests/test0.brf
+//go:embed tests/test0.brief
 var test0 string
 
-//go:embed tests/test1.brf
+//go:embed tests/test1.brief
 var test1 string
 
-//go:embed tests/test2.brf
+//go:embed tests/test2.brief
 var test2 string
 
-//go:embed tests/test3.brf
+//go:embed tests/test3.brief
 var test3 string
+
+//go:embed tests/test4.brief
+var test4 string
 
 func TestDecoder1(t *testing.T) {
 	t.Log(test1)

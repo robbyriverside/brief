@@ -55,8 +55,9 @@ func (node *Node) write(out *strings.Builder) []*Node {
 	if len(node.Name) > 0 {
 		if NoQuote(node.Name) {
 			out.WriteString(":" + node.Name)
+		} else {
+			out.WriteString(fmt.Sprintf(":%q", node.Name))
 		}
-		out.WriteString(fmt.Sprintf(":%q", node.Name))
 	}
 	for key, val := range node.Keys {
 		if NoQuote(val) {

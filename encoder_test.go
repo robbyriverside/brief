@@ -9,8 +9,8 @@ import (
 )
 
 func TestEncoder(t *testing.T) {
-	t.Logf("\n%s", test0)
-	nodes, err := brief.Decode(strings.NewReader(test0))
+	t.Logf("\n%s", test4)
+	nodes, err := brief.Decode(strings.NewReader(test4))
 	if err != nil {
 		t.Fatal(err)
 	}

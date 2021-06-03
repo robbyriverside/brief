@@ -1,5 +1,5 @@
 html
-    head:"go-flags"
+    head
         title `My Web Page`
     body class:mybody
         h1 `My Web Page`

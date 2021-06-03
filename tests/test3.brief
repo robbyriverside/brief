@@ -1,5 +1,5 @@
-#include `test1.brf`
-#include `test2.brf`
+#include `test1.brief`
+#include `test2.brief`
 html class:foo
     head
         title `just for good measure`
