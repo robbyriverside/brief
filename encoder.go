@@ -3,7 +3,7 @@ package brief
 import (
 	"fmt"
 	"strings"
-	"unicode"
+	"text/scanner"
 )
 
 // Encode converts a node into brief format
@@ -20,17 +20,33 @@ func (node *Node) Encode() []byte {
 	return []byte(out.String())
 }
 
-func isIdentRune(ch rune, i int) bool {
-	return ch == '_' || unicode.IsLetter(ch) || unicode.IsDigit(ch) && i > 0
-}
-
-func isSymbol(token string) bool {
-	for i, ch := range token {
-		if !isIdentRune(ch, i) {
+// NoQuote tests if the value is an identifier or number
+func NoQuote(value string) bool {
+	var s scanner.Scanner
+	s.Init(strings.NewReader(value))
+	tok := s.Scan()
+	var minus bool
+	for {
+		switch tok {
+		case scanner.Ident:
+			return !minus && s.TokenText() == value
+		case scanner.Float, scanner.Int:
+			numval := s.TokenText()
+			if minus {
+				numval = "-" + numval
+			}
+			return numval == value
+		case '-':
+			if minus {
+				return false
+			}
+			minus = true
+			tok = s.Scan()
+		default:
 			return false
 		}
 	}
-	return true
+
 }
 
 func (node *Node) write(out *strings.Builder) []*Node {
@@ -40,7 +56,7 @@ func (node *Node) write(out *strings.Builder) []*Node {
 		out.WriteString(":" + node.Name)
 	}
 	for key, val := range node.Keys {
-		if isSymbol(val) {
+		if NoQuote(val) {
 			out.WriteString(fmt.Sprintf(" %s:%s", key, val))
 			continue
 		}

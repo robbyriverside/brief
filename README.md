@@ -83,9 +83,9 @@ Multiple top-level forms are allowed and returned as an array of Nodes by the de
 Writes the Node object in brief format.
 
 ```go
-var Node Node
+var node Node
 var out io.Writer
-err := Node.Encode(out)
+err := node.Encode(out)
 ```
 
 ### Brief XML Output
@@ -93,9 +93,9 @@ err := Node.Encode(out)
 Writes the Node object in XML format.
 
 ```go
-var Node Node
+var node Node
 var out io.Writer
-err := Node.WriteXML(out)
+err := node.WriteXML(out)
 ```
 
 XML output uses a template.  This serves as an example of using brief with a template.
@@ -179,7 +179,7 @@ Lookup is a Node method which gets a context value from a value spec.
 Slice is a Node method which creates a slice of strings from a sequence of value specs.
 
 ```text/template
-{{ print .Slice "project.id" "project" }}
+{{ .Slice "project.id" "project" }}
 ```
 
 #### Join
@@ -187,7 +187,7 @@ Slice is a Node method which creates a slice of strings from a sequence of value
 Join is a Node method which combines sequence of strings using a separator from a sequence of value specs.
 
 ```text/template
-{{ print .Join "/" "project.id" "project" }}
+{{ .Join "/" "project.id" "project" }}
 ```
 
 #### Printf
