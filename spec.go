@@ -83,3 +83,21 @@ func (node *Node) Child(path ...string) *Node {
 	}
 	return at
 }
+
+func (node *Node) FindAll(name string) []*Node {
+	return NewSpec(name).FindAll(node)
+}
+
+func (s *Spec) FindAll(node *Node) []*Node {
+	result := make([]*Node, 0)
+	for _, sub := range node.Body {
+		if s.Match(sub) {
+			result = append(result, sub)
+		}
+	}
+	for _, sub := range node.Body {
+		found := s.FindAll(sub)
+		result = append(result, found...)
+	}
+	return result
+}

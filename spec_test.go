@@ -102,3 +102,20 @@ func TestFind(t *testing.T) {
 		t.Logf("%s %t --> %s", test.Name, test.Found, found)
 	}
 }
+
+func TestCollect(t *testing.T) {
+	t.Log(test5)
+	nodes, err := brief.Decode(strings.NewReader(test5))
+	if err != nil {
+		t.Fatal(err)
+	}
+	node := nodes[0]
+	child := node.Find("command:bottom")
+	if child == nil {
+		t.Fatal("bottom not found")
+	}
+	t.Logf("child %s", child)
+	names := child.Collect("command", "project")
+	t.Logf("names: %s", names)
+
+}

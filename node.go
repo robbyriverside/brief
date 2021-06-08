@@ -44,7 +44,7 @@ func (node *Node) String() string {
 func (node *Node) Key(name string) string {
 	val, ok := node.Keys[name]
 	if !ok {
-		return "{unknown key}"
+		return "noKey"
 	}
 	return val
 }
@@ -54,22 +54,7 @@ func (node *Node) Key(name string) string {
 // single name, returns the Name of the context
 // a dotted pair returns a key value from the context {context}.{key}
 func (node *Node) Lookup(spec string) string {
-	values := strings.Split(spec, ".")
-	hasKey := len(values) > 1
-	elem := spec
-	name := "name"
-	if hasKey {
-		elem = values[0]
-		name = values[1]
-	}
-	ctx := node.Context(elem)
-	if ctx == nil {
-		return "{unknown context}"
-	}
-	if hasKey {
-		return ctx.Key(name)
-	}
-	return ctx.Name
+	return NewValueSpec(spec).Lookup(node)
 }
 
 // Slice calls Lookup on each spec and returns the slice

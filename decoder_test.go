@@ -26,6 +26,9 @@ var test3 string
 //go:embed tests/test4.brief
 var test4 string
 
+//go:embed tests/test5.brief
+var test5 string
+
 func TestDecoder1(t *testing.T) {
 	t.Log(test1)
 	dec := brief.NewDecoder(strings.NewReader(test1), 4, "tests")
