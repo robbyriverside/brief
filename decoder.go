@@ -38,6 +38,7 @@ type Decoder struct {
 	Key, Feature   string
 	Padding        int
 	Dir            string
+	Debug          bool
 }
 
 // NewDecoder from reader with tabsize and optional directory
@@ -50,7 +51,7 @@ func NewDecoder(reader io.Reader, tabsize int, dirs ...string) *Decoder {
 	} else {
 		dir, err = os.Getwd()
 		if err != nil {
-			dir = "/"
+			dir = "./"
 		}
 	}
 	var decoder Decoder
@@ -303,6 +304,9 @@ func (dec *Decoder) contentFeature() {
 func (dec *Decoder) includeFile(filename string) error {
 	if !filepath.IsAbs(filename) {
 		filename = filepath.Join(dec.Dir, filename)
+	}
+	if dec.Debug {
+		fmt.Println("*** include", filename)
 	}
 	file, err := os.Open(filename)
 	if err != nil {
