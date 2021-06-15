@@ -70,6 +70,7 @@ func (val *ValueSpec) Lookup(node *Node) string {
 		if len(kval) == 0 {
 			return NoVal
 		}
+		return kval
 	}
 	if len(ctx.Name) == 0 {
 		return NoName
@@ -89,13 +90,12 @@ func (node *Node) Collect(names ...string) []string {
 		if at == nil {
 			break
 		}
-		for i, spec := range specs {
+		for _, spec := range specs {
 			val, ok := spec.Value(at)
 			if !ok {
 				continue
 			}
 			result = append(result, val)
-			specs = specs[i:]
 			break
 		}
 		at = at.Parent
