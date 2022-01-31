@@ -276,6 +276,10 @@ func (dec *Decoder) Decode() ([]*Node, error) {
 			}
 		case '#':
 			switch dec.State {
+			case KeyElem, KeyEmpty:
+				dec.Key = ""
+				dec.readBlock()
+				dec.State = KeyEmpty
 			case NewLine:
 				dec.State = OnFeature
 			default:
@@ -284,6 +288,29 @@ func (dec *Decoder) Decode() ([]*Node, error) {
 		}
 	}
 	return dec.Roots, nil
+}
+
+func (dec *Decoder) readBlock() error {
+	delim := dec.Text.Next()
+	if !strings.ContainsAny(string(delim), "|@$%") {
+		return dec.Error("invalid block delimiter: #" + string(delim))
+	}
+	var build strings.Builder
+	for ch := dec.Text.Next(); ch != scanner.EOF; ch = dec.Text.Next() {
+		if ch == delim {
+			at := dec.Text.Next()
+			if at == '#' {
+				dec.Token = build.String()
+				dec.setContent()
+				return nil
+			}
+			build.WriteRune(ch)
+			build.WriteRune(at)
+			continue
+		}
+		build.WriteRune(ch)
+	}
+	return dec.Error("Found EOF while reading block no matching " + string(delim))
 }
 
 func (dec *Decoder) contentFeature() {
