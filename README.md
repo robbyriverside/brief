@@ -278,10 +278,19 @@ The purpose of this shorthand is to improve readability and standardize on eleme
 Line cannot start with a back-tic.  Body text requires an element.  Content back-tic is last feature on a line.
 A line that starts with plus '+' is a continuation of the attributes on the line above.  May be followed by a space.
 
+Using simple back string (or rawstring):
 ```brief
 elem:foo bar:zed
     + more:true range:"3 to 5" `
   more content here`
+```
+
+Or using special hash delimiter (#| |#, #@ @#, #$ $#, #% %#) for when you need a nested rawstring ``
+```brief
+elem:foo bar:zed
+    + more:true range:"3 to 5" #|
+  more content here
+  |#
 ```
 
 ### Include files
