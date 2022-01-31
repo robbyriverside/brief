@@ -1,5 +1,11 @@
 #include `test1.brief`
 #include `test2.brief`
-html class:foo
+html class:foo #| now is the
+#$time for `bupkis`$#
+all good
+|#
     head
-        title `just for good measure`
+        title #@just for 
+
+
+good measure@#
