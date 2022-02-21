@@ -84,10 +84,12 @@ func (node *Node) Child(path ...string) *Node {
 	return at
 }
 
+// FindAll nodes that match name
 func (node *Node) FindAll(name string) []*Node {
 	return NewSpec(name).FindAll(node)
 }
 
+// FindAll nodes in body that match spec
 func (s *Spec) FindAll(node *Node) []*Node {
 	result := make([]*Node, 0)
 	for _, sub := range node.Body {
