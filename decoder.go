@@ -42,13 +42,11 @@ type Decoder struct {
 }
 
 // NewDecoder from reader with tabsize and optional directory
-// directory is used with #include and defaults to working directory
-func NewDecoder(reader io.Reader, tabsize int, dirs ...string) *Decoder {
-	var err error
-	var dir string
-	if len(dirs) > 0 {
-		dir = dirs[0]
-	} else {
+// srcdir is used with #include files relative to this reader
+func NewDecoder(reader io.Reader, tabsize int, srcdir string) *Decoder {
+	dir := srcdir
+	if len(dir) == 0 {
+		var err error
 		dir, err = os.Getwd()
 		if err != nil {
 			dir = "./"
@@ -56,17 +54,66 @@ func NewDecoder(reader io.Reader, tabsize int, dirs ...string) *Decoder {
 	}
 	var decoder Decoder
 	decoder.Dir = dir
-	decoder.Err = err
 	decoder.Text.Init(reader, tabsize)
 	decoder.Roots = make([]*Node, 0)
 	decoder.Nesting = make([]*Node, 0)
 	return &decoder
 }
 
+// NewFileDecoder new decoder that reads from a filename
+func NewFileDecoder(filename string) (*Decoder, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	return NewDecoder(file, 4, fileDir(filename)), nil
+}
+
+func fileDir(filename string) string {
+	if filepath.IsAbs(filename) {
+		return filepath.Dir(filename)
+	}
+	abs, err := filepath.Abs(filename)
+	if err != nil {
+		abs = "./" + filename // because os.Getwd failed
+	}
+	return filepath.Dir(abs)
+}
+
+// DecodeFile into brief Nodes
+func DecodeFile(filename string) ([]*Node, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	nodes, err := Decode(file, fileDir(filename))
+	if err != nil {
+		return nil, err
+	}
+	return nodes, nil
+}
+
+// Decode creates a Node by parsing brief format from reader
+func Decode(reader io.Reader, srcdir string) ([]*Node, error) {
+	dec := NewDecoder(reader, 4, srcdir)
+	return dec.Decode()
+}
+
+// Errorf added to decoder and returned
+func (dec *Decoder) Errorf(format string, args ...interface{}) error {
+	return dec.Error(fmt.Sprintf(format, args...))
+}
+
 // Error added to decoder and returned
 func (dec *Decoder) Error(msg string) error {
 	pos := dec.Text.Pos()
-	dec.Err = fmt.Errorf("%s on %q at %d:%d", msg, dec.Token, pos.Line, pos.Column-len(dec.Token))
+	err := fmt.Errorf("%s on %q at %d:%d", msg, dec.Token, pos.Line, pos.Column-len(dec.Token))
+	if dec.Err != nil {
+		err = fmt.Errorf("%s\n%s", dec.Err, err)
+	}
+	dec.Err = err
 	return dec.Err
 }
 
@@ -154,26 +201,6 @@ func (dec *Decoder) addNode() {
 	dec.Nesting = append(dec.Nesting, node)
 }
 
-// DecodeFile into brief Nodes
-func DecodeFile(filename string) ([]*Node, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	nodes, err := Decode(file)
-	if err != nil {
-		return nil, err
-	}
-	return nodes, nil
-}
-
-// Decode creates a Node by parsing brief format from reader
-func Decode(reader io.Reader) ([]*Node, error) {
-	dec := NewDecoder(reader, 4)
-	return dec.Decode()
-}
-
 // Decode creates a Node by parsing brief format from reader
 func (dec *Decoder) Decode() ([]*Node, error) {
 	dec.State = KeyEmpty
@@ -188,6 +215,12 @@ func (dec *Decoder) Decode() ([]*Node, error) {
 			default:
 				return nil, dec.Error("invalid stray token at end of line above")
 			}
+		}
+		// if this is a feature use the feature handler
+		if dec.State == FeatureSet {
+			dec.handleFeature()
+			dec.State = KeyEmpty
+			continue
 		}
 		switch dec.ScanType {
 		case scanner.Comment: // skip comments
@@ -244,9 +277,6 @@ func (dec *Decoder) Decode() ([]*Node, error) {
 			case KeyElem, KeyEmpty:
 				dec.Key = ""
 				dec.setContent()
-				dec.State = KeyEmpty
-			case FeatureSet:
-				dec.contentFeature()
 				dec.State = KeyEmpty
 			default:
 				return nil, dec.Error("invalid content found")
@@ -311,51 +341,4 @@ func (dec *Decoder) readBlock() error {
 		build.WriteRune(ch)
 	}
 	return dec.Error("Found EOF while reading block no matching " + string(delim))
-}
-
-func (dec *Decoder) contentFeature() {
-	content := strings.Trim(dec.Token, "`")
-	feature := strings.ToLower(dec.Feature)
-	if len(feature) == 0 {
-		dec.Err = dec.Error("empty feature")
-	}
-	if len(content) == 0 {
-		dec.Err = dec.Error("empty feature content")
-	}
-	switch feature {
-	case "include":
-		dec.Err = dec.includeFile(content)
-	}
-}
-
-func (dec *Decoder) includeFile(filename string) error {
-	if !filepath.IsAbs(filename) {
-		filename = filepath.Join(dec.Dir, filename)
-	}
-	if dec.Debug {
-		fmt.Println("*** include", filename)
-	}
-	file, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	dir := filepath.Dir(filename)
-	idec := NewDecoder(file, dec.Text.TabCount, dir)
-	idec.Padding = dec.indent()
-	nodes, err := idec.Decode()
-	if err != nil {
-		return err
-	}
-	size := len(nodes)
-	if size == 0 {
-		return nil
-	}
-	parent := dec.findParent(nodes[size-1].Indent)
-	if parent != nil {
-		parent.Body = append(parent.Body, nodes...)
-		return nil
-	}
-	dec.Roots = append(dec.Roots, nodes...)
-	return nil
 }

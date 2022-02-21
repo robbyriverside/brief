@@ -10,7 +10,7 @@ import (
 
 func TestXMLOut(t *testing.T) {
 	t.Logf("\n%s", test1)
-	nodes, err := brief.Decode(strings.NewReader(test1))
+	nodes, err := brief.Decode(strings.NewReader(test1), "tests")
 	if err != nil {
 		t.Fatal(err)
 	}

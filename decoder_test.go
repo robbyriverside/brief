@@ -9,6 +9,8 @@ import (
 	"text/scanner"
 
 	"github.com/robbyriverside/brief"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 //go:embed tests/test0.brief
@@ -29,10 +31,25 @@ var test4 string
 //go:embed tests/test5.brief
 var test5 string
 
+//go:embed tests/badinclude.brief
+var badinclude string
+
+func TestBadInclude(t *testing.T) {
+	t.Log(badinclude)
+	dec := brief.NewDecoder(strings.NewReader(badinclude), 4, "tests")
+	dec.Debug = true
+	nodes, err := dec.Decode()
+	assert.Error(t, err, "no error on bad include")
+	for _, node := range nodes {
+		t.Log(node)
+	}
+}
+
 func TestDecoder1(t *testing.T) {
 	t.Log(test1)
 	dec := brief.NewDecoder(strings.NewReader(test1), 4, "tests")
 	nodes, err := dec.Decode()
+	require.NoError(t, err, "decoder failed")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -54,9 +71,7 @@ func TestDecoderInclude(t *testing.T) {
 	t.Log(test2)
 	dec := brief.NewDecoder(strings.NewReader(test2), 4, "tests")
 	nodes, err := dec.Decode()
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err, "decoder failed")
 	if len(nodes) != 1 {
 		t.Errorf("fail %d != 1", len(nodes))
 	}
@@ -71,9 +86,7 @@ func TestDecoderMultiple(t *testing.T) {
 	t.Log(test3)
 	dec := brief.NewDecoder(strings.NewReader(test3), 4, "tests")
 	nodes, err := dec.Decode()
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err, "decoder failed")
 	tests := []func(node *brief.Node) bool{
 		func(node *brief.Node) bool {
 			return node.Type == "html" && node.Name == "foo"
@@ -133,7 +146,7 @@ func TestScanner(t *testing.T) {
 }
 
 func TestShowScanner(t *testing.T) {
-	fmt.Println(test1)
+	t.Log(test1)
 	var text brief.Scanner
 	text.Init(strings.NewReader(test0), 4)
 	for c := text.Scan(); c != scanner.EOF; c = text.Scan() {

@@ -1,5 +1,5 @@
 #include `test1.brief`
-#include `test2.brief`
+#include "test2.brief"
 html class:foo #| now is the
 #$time for `bupkis`$#
 all good

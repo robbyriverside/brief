@@ -10,14 +10,14 @@ import (
 
 func TestEncoder(t *testing.T) {
 	t.Logf("\n%s", test4)
-	nodes, err := brief.Decode(strings.NewReader(test4))
+	nodes, err := brief.Decode(strings.NewReader(test4), "tests")
 	if err != nil {
 		t.Fatal(err)
 	}
 	before := nodes[0]
 	out := before.Encode()
 	t.Logf("\n%s", string(out))
-	nodes, err = brief.Decode(strings.NewReader(string(out)))
+	nodes, err = brief.Decode(strings.NewReader(string(out)), "tests")
 	if err != nil {
 		t.Fatal(err)
 	}

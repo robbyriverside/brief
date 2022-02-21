@@ -60,7 +60,7 @@ func TestLookupValue(t *testing.T) {
 		},
 	}
 	t.Logf("test0:\n%s\n", test0)
-	nodes, err := brief.Decode(strings.NewReader(test0))
+	nodes, err := brief.Decode(strings.NewReader(test0), "tests")
 	if err != nil {
 		t.Fatal(err)
 	}

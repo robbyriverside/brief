@@ -1,0 +1,4 @@
+pages
+    #include "no_such_file.brief"
+    htmlX:second
+        head:foo

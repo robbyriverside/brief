@@ -38,7 +38,7 @@ func TestChild(t *testing.T) {
 		},
 	}
 	t.Log(test1)
-	nodes, err := brief.Decode(strings.NewReader(test1))
+	nodes, err := brief.Decode(strings.NewReader(test1), "tests")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -86,7 +86,7 @@ func TestFind(t *testing.T) {
 		},
 	}
 	t.Log(test1)
-	nodes, err := brief.Decode(strings.NewReader(test1))
+	nodes, err := brief.Decode(strings.NewReader(test1), "tests")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -105,7 +105,7 @@ func TestFind(t *testing.T) {
 
 func TestCollect(t *testing.T) {
 	t.Log(test5)
-	nodes, err := brief.Decode(strings.NewReader(test5))
+	nodes, err := brief.Decode(strings.NewReader(test5), "tests")
 	if err != nil {
 		t.Fatal(err)
 	}
