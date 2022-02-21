@@ -1,5 +1,7 @@
 # Brief Specification Format
 
+Version 1.1.0
+
 In short, the brief format is XML with minimal syntax and indented blocks like Python.
 
 This repo contains a decoder for the brief format written in Go.
