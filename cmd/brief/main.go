@@ -8,11 +8,14 @@ import (
 	"github.com/robbyriverside/brief"
 )
 
+var SemVer = "unknown"
+
 type options struct {
 	Args struct {
 		File string `positional-arg-name:"file" description:"brief file"`
 	} `positional-args:"true" required:"true"`
 	Verbose bool `short:"v" long:"verbose" description:"verbose output"`
+	Version bool `long:"version" description:"describe version"`
 }
 
 func main() {
@@ -24,6 +27,10 @@ func main() {
 		if flagsErr, ok := err.(*flags.Error); ok && flagsErr.Type == flags.ErrHelp {
 			return
 		}
+	}
+	if opt.Version {
+		fmt.Println("brief", SemVer)
+		return
 	}
 	dec, err := brief.NewFileDecoder(opt.Args.File)
 	if err != nil {
