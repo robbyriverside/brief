@@ -1,18 +1,17 @@
 version: '3'
 
+vars:
+  SEMVER:
+    sh: git describe --tags --always
+  LDFLAGS: -ldflags="-X main.SemVer={{.SEMVER}}"
+
 tasks:
   build:
     cmds:
-      - go build -v  -ldflags="-X main.SemVer={{.SEMVER}}" -o brief cmd/brief/main.go
-    vars:
-      SEMVER:
-        sh: git describe --tags --always
+      - go build -v {{.LDFLAGS}}  -o brief cmd/brief/main.go
 
   install:
     dir: cmd/brief
     cmds:
-      - go install -ldflags="-X main.SemVer={{.SEMVER}}"
-    vars:
-      SEMVER:
-        sh: git describe --tags --always
+      - go install {{.LDFLAGS}}
 

@@ -8,6 +8,7 @@ import (
 	"github.com/robbyriverside/brief"
 )
 
+// SemVer semantic version from github tag (see Taskfile.dist.yml)
 var SemVer = "unknown"
 
 type options struct {

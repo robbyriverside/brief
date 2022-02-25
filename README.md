@@ -281,6 +281,7 @@ Line cannot start with a back-tic.  Body text requires an element.  Content back
 A line that starts with plus '+' is a continuation of the attributes on the line above.  May be followed by a space.
 
 Using simple back string (or rawstring):
+
 ```brief
 elem:foo bar:zed
     + more:true range:"3 to 5" `
@@ -288,6 +289,7 @@ elem:foo bar:zed
 ```
 
 Or using special hash delimiter (#| |#, #@ @#, #$ $#, #% %#) for when you need a nested rawstring ``
+
 ```brief
 elem:foo bar:zed
     + more:true range:"3 to 5" #|
