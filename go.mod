@@ -3,6 +3,7 @@ module github.com/robbyriverside/brief
 go 1.16
 
 require (
+	github.com/boltdb/bolt v1.3.1
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/stretchr/testify v1.7.0
